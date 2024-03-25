@@ -69,6 +69,8 @@ GEM
     bootsnap (1.18.3)
       msgpack (~> 1.2)
     builder (3.2.4)
+    byebug (11.1.3)
+    coderay (1.1.3)
     concurrent-ruby (1.2.3)
     crass (1.0.6)
     date (3.3.4)
@@ -76,9 +78,23 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     diff-lcs (1.5.1)
+    dotenv (3.1.0)
+    dotenv-rails (3.1.0)
+      dotenv (= 3.1.0)
+      railties (>= 6.1)
     erubi (1.12.0)
+    factory_bot (6.4.6)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.4.3)
+      factory_bot (~> 6.4)
+      railties (>= 5.0.0)
+    faker (3.2.3)
+      i18n (>= 1.8.11, < 2)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     i18n (1.14.4)
       concurrent-ruby (~> 1.0)
     io-console (0.7.2)
@@ -98,6 +114,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.22.3)
     msgpack (1.7.2)
+    multi_xml (0.6.0)
     net-imap (0.4.10)
       date
       net-protocol
@@ -111,6 +128,12 @@ GEM
     nokogiri (1.16.3-x86_64-darwin)
       racc (~> 1.4)
     pg (1.5.6)
+    pry (0.14.2)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+    pry-byebug (3.10.1)
+      byebug (~> 11.0)
+      pry (>= 0.13, < 0.15)
     psych (5.1.2)
       stringio
     puma (5.6.8)
@@ -176,6 +199,7 @@ GEM
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    vcr (6.2.0)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -187,12 +211,18 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   debug
+  dotenv-rails
+  factory_bot_rails
+  faker
+  httparty
   pg (~> 1.1)
+  pry-byebug
   puma (~> 5.0)
   rails (~> 7.0.8, >= 7.0.8.1)
   rspec-rails
   shoulda-matchers (~> 6.0)
   tzinfo-data
+  vcr
 
 RUBY VERSION
    ruby 3.1.2p20
