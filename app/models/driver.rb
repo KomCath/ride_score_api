@@ -10,4 +10,6 @@
 class Driver < ApplicationRecord
   has_many :assignments
   has_many :rides, through: :assignments
+
+  validates_presence_of :home_address
 end
