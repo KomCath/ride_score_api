@@ -32,12 +32,9 @@ RSpec.describe Assignment, type: :model do
       end
 
       context "when necessary attributes are NOT nil" do
-        let(:commute_duration) { rand(1.1..3.5) }
-        let(:score) { rand(10.0..30.0) }
-
         it "does not trigger set_attributes" do
           assignment = create(:assignment, ride:ride, driver: driver,
-                              commute_duration: commute_duration, score: score)
+                              commute_duration: rand(1.1..3.5), score: rand(10.0..30.0))
           allow(assignment).to receive(:set_attributes)
           assignment.save
           expect(assignment).not_to have_received(:set_attributes)
@@ -45,11 +42,8 @@ RSpec.describe Assignment, type: :model do
       end
 
       context "when necessary references are NOT present" do
-        let(:commute_duration) { nil }
-        let(:score) { nil }
-
         it "does not trigger set_attributes" do
-          assignment = create(:assignment, commute_duration: commute_duration, score: score)
+          assignment = create(:assignment)
           allow(assignment).to receive(:set_attributes)
           assignment.save
           expect(assignment).not_to have_received(:set_attributes)
