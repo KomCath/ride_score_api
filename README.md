@@ -21,7 +21,10 @@
 - Rails version `7.0.8`
 - Rspec + Postgresql
 
-- Models: drivers + rides + assignments
+- Models: driver + ride + assignment
+- Service: `GoogleMapsMetricsService`
+- Controller: 
+
 ---
 
 ## Challenge Architecture plans:
@@ -57,7 +60,7 @@
 
 ### Services:
 
-- google api call - RideMetricsService - maybe?
+- google api call - `GoogleMapsMetricsService`
 
 ### Controllers:
 
