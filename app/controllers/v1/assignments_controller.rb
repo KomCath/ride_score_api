@@ -26,17 +26,11 @@ module V1
     def serialize_assignment(assignment)
       {
         score: assignment.score,
-        # start_address: assignment.ride.start_address,
-        # destination_address: assignment.ride.destination_address,
         commute_duration: format_duration(assignment.commute_duration),
         ride_duration: format_duration(assignment.ride.ride_duration),
         ride_earnings: "$#{assignment.ride.ride_earnings}"
       }
     end
-
-    # def format_address(address)
-      
-    # end
 
     def format_duration(duration)
       total_minutes = (duration * 60).to_i
