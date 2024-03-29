@@ -28,14 +28,17 @@
 ```ruby
 GOOGLE_MAPS_API_KEY=valid_key_in
 ```
+3- you will need to enable the service `distance-matrix-backend` from Googele Maps API that we are using for this challenge [here](https://console.cloud.google.com/marketplace/product/google/distance-matrix-backend.googleapis.com?q=search&referrer=search&project=peak-lattice-417821)
 
-3- run `bundle install`
+4- run `bundle install`
 
-4- run `rails dev:cache`
+5- run `rails dev:cache`
 
-5- run `rails db:setup`
+6- run `rails db:setup`
 
-6- start the server `rails server`
+7- start the server `rails server`
+
+8- see the magic happen ✨
 
 [driver with less than 10 rides](http://localhost:3000/v1/3/assignments)
 
