@@ -31,9 +31,9 @@ GOOGLE_MAPS_API_KEY=valid_key_in
 
 3- run `bundle install`
 
-4- run `rails db:setup`
+4- run `rails dev:cache`
 
-5- run `rails dev:cache`
+5- run `rails db:setup`
 
 6- start the server `rails server`
 
