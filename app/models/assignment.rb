@@ -14,7 +14,7 @@ class Assignment < ApplicationRecord
   belongs_to :driver
   belongs_to :ride
 
-  after_save :set_attributes, if: :should_set_attributes?
+  before_save :set_attributes, if: :should_set_attributes?
 
   private
 

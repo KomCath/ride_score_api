@@ -24,7 +24,7 @@ class Ride < ApplicationRecord
 
   validates_presence_of :start_address, :destination_address
 
-  after_save :set_attributes, if: -> { ride_duration.nil? || ride_earnings.nil? }
+  before_save :set_attributes, if: -> { ride_duration.nil? || ride_earnings.nil? }
 
   private
 
