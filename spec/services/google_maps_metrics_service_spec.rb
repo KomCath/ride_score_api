@@ -16,8 +16,6 @@ RSpec.describe GoogleMapsMetricsService, type: :service do
     let(:result) { service.fetch_distance_and_duration }
 
     context "when a cached response is available" do
-     let(:cached_response) { "banana" }
-
       before do
         allow(Rails.cache).to receive(:fetch).and_call_original
         result
