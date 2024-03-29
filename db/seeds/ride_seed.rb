@@ -43,10 +43,21 @@ addresses = [
     start_address: "1128 N Orange Grove Ave, West Hollywood, CA",
     destination_address: "1000 Vin Scully Ave, Los Angeles, CA",
   },
+  {
+    start_address: "624 N Anaheim Blvd, Anaheim, CA",
+    destination_address: "4017 E 6th St, Long Beach, CA",
+  },
+  {
+    start_address: "4017 E 6th St, Long Beach, CA",
+    destination_address: "624 N Anaheim Blvd, Anaheim, CA",
+  },
+  {
+    start_address: "624 N Anaheim Blvd, Anaheim, CA",
+    destination_address: "17424 Sherman Way, Van Nuys, CA",
+  },
 ]
 
 addresses.each do |address|
-  p address
   ActiveRecord::Base.transaction do
     start_address = Geocoder.search(*address[:start_address]).first.coordinates
     destination_address = Geocoder.search(*address[:destination_address]).first.coordinates

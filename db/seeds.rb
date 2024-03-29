@@ -3,10 +3,11 @@
 
 ORDERED_SEED_FILES = [
   "driver",
-  "ride"
+  "ride",
+  "assignment",
 ]
 
-p "🌱Seeding..."
+puts "🌱Seeding..."
 
 ORDERED_SEED_FILES.each do |model|
   puts "\nNow seeding #{model.camelize.pluralize}\n\n"
