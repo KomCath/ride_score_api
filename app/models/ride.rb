@@ -41,7 +41,7 @@ class Ride < ApplicationRecord
   def calculate_ride_earnings(ride_distance)
     additional_distance_earnings = [(ride_distance - RATES[:additional_distance_threshold]) * RATES[:per_mile], 0].max
     additional_duration_earnings = [(ride_duration - RATES[:additional_duration_threshold]) * RATES[:per_minute], 0].max
-    sprintf('%.2f', (RATES[:base] + additional_distance_earnings + additional_duration_earnings))
+    sprintf("%.2f", (RATES[:base] + additional_distance_earnings + additional_duration_earnings))
   end
 
   def fetch_metrics_from_service(origin, destination)

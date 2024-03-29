@@ -34,7 +34,7 @@ class Assignment < ApplicationRecord
   end
 
   def calculate_score
-    (ride.ride_earnings / (commute_duration + ride.ride_duration)).to_f
+    sprintf("%.2f",(ride.ride_earnings / (commute_duration + ride.ride_duration)))
   end
 
   def fetch_commute_metrics(origin, destination)
