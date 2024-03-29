@@ -10,8 +10,8 @@ RSpec.describe Ride, type: :model do
   end
 
   describe "Callbacks" do
-    describe ".set_attributes after_save" do
-      shared_examples "triggers set_attributes after_save" do
+    describe ".set_attributes before_save" do
+      shared_examples "triggers set_attributes before_save" do
         it "triggers" do
           ride = create(:ride, ride_duration: ride_duration, ride_earnings: ride_earnings)
           allow(ride).to receive(:set_attributes)
@@ -23,13 +23,13 @@ RSpec.describe Ride, type: :model do
       context "when ride_duration is nil" do
         let(:ride_duration) { nil }
         let(:ride_earnings) { 15.3 }
-        include_examples "triggers set_attributes after_save"
+        include_examples "triggers set_attributes before_save"
       end
 
       context "when ride_earnings is nil" do
         let(:ride_duration) { 15.3 }
         let(:ride_earnings) { nil }
-        include_examples "triggers set_attributes after_save"
+        include_examples "triggers set_attributes before_save"
       end
 
       context "when necessary attributes are NOT nil" do

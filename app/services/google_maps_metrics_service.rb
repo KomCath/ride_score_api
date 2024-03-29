@@ -7,13 +7,21 @@ class GoogleMapsMetricsService
   end
 
   def fetch_distance_and_duration
-    response = make_api_request
+    response = check_cache
     handle_response(response)
   rescue StandardError => e
     { error: "An unexpected error occurred: #{e.message}" }
   end
 
   private
+
+  def check_cache
+    cache_key = "distance_#{@origin}_#{@destination}"
+
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      make_api_request
+    end
+  end
 
   def make_api_request
     url = "#{BASE_URL}?"
@@ -33,7 +41,7 @@ class GoogleMapsMetricsService
       { error: response["rows"][0]["elements"][0]["status"] }
       end
     else
-      { error: response["error_message"] || "Failed to fetch data from the Google Maps API" }
+      { error: response["error_message"] }
     end
   end
 

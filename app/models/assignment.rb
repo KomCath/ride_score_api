@@ -14,7 +14,7 @@ class Assignment < ApplicationRecord
   belongs_to :driver
   belongs_to :ride
 
-  after_save :set_attributes, if: :should_set_attributes?
+  before_save :set_attributes, if: :should_set_attributes?
 
   private
 
@@ -34,7 +34,7 @@ class Assignment < ApplicationRecord
   end
 
   def calculate_score
-    (ride.ride_earnings / (commute_duration + ride.ride_duration)).to_f
+    sprintf("%.2f",(ride.ride_earnings / (commute_duration + ride.ride_duration)))
   end
 
   def fetch_commute_metrics(origin, destination)

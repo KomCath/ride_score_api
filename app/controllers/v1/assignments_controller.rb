@@ -4,6 +4,8 @@ module V1
 
     def index
       paginated_assignments = sorted_assignments.page(params[:page]).per(DEFAULT_PER_PAGE_SIZE)
+
+      return render json: { message: "No ride available" } if paginated_assignments.empty?
       render json: paginated_assignments.map { |assignment| serialize_assignment(assignment) }
     end
 

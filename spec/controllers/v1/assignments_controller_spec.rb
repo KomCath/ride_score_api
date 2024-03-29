@@ -2,26 +2,29 @@ RSpec.describe V1::AssignmentsController, type: :controller do
   describe "GET #index" do
     context "when driver exists" do
       let(:driver) { create(:driver) }
-      let(:num_assignments) { 5 }
       let(:json_response) { JSON.parse(response.body) }
-      let!(:expected_data) do
-        create_list(:ride, num_assignments, ride_duration: 1.2, ride_earnings: 5).map do |ride|
-          create(:assignment, driver: driver, ride: ride, score: 35, commute_duration: 0.5)
-        end
-      end
 
-      before do
-        create_list(:ride, 10, ride_duration: 1.2, ride_earnings: 5).map do |ride|
-          create(:assignment, ride: ride, score: 35, commute_duration: 0.5)
-        end
-        get :index, params: { driver_id: driver.id }
-      end
+      before {  get :index, params: { driver_id: driver.id } }
 
       it "returns a successful response" do
         expect(response).to have_http_status(:success)
       end
 
       context "when returning assignments" do
+        let(:num_assignments) { 5 }
+        let!(:expected_data) do
+          create_list(:ride, num_assignments, ride_duration: 1.2, ride_earnings: 5).map do |ride|
+            create(:assignment, driver: driver, ride: ride, score: 35, commute_duration: 0.5)
+          end
+        end
+
+        before do
+          create_list(:ride, 10, ride_duration: 1.2, ride_earnings: 5).map do |ride|
+            create(:assignment, ride: ride, score: 35, commute_duration: 0.5)
+          end
+          get :index, params: { driver_id: driver.id }
+        end
+
         it "returns the correct number of assignments associated with the driver" do
           expect(json_response.count).to eq(expected_data.count)
         end
@@ -40,7 +43,12 @@ RSpec.describe V1::AssignmentsController, type: :controller do
             expect(json_response.count).to eq(V1::AssignmentsController::DEFAULT_PER_PAGE_SIZE)
           end
         end
+      end
 
+      context "when there are no assignments to return" do
+        it "return a message" do
+          expect(response.body).to eq({ message: "No ride available" }.to_json)
+        end
       end
     end
 
