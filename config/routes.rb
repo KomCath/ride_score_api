@@ -3,5 +3,7 @@ Rails.application.routes.draw do
     scope ":driver_id" do
       resources :assignments, only: [:index]
     end
+
+    resources :addresses
   end
 end

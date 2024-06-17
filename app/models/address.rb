@@ -13,4 +13,5 @@
 #  updated_at :datetime         not null
 #
 class Address < ApplicationRecord
+  validates_presence_of :line1, :city, :state, :zip_code
 end
