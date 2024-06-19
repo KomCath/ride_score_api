@@ -28,7 +28,7 @@ module V1
       if address.save
         render json: address, status: :created
       else
-        render json: address.errors.full_messages, status: :unprocessable_entity
+        render json: { error: address.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
@@ -46,7 +46,7 @@ module V1
       if @address.update(address_params)
         render json: @address, status: :ok
       else
-        render json: @address.errors.full_messages, status: :unprocessable_entity
+        render json: { error: @address.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
