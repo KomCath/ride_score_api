@@ -14,12 +14,11 @@ RSpec.describe AddressVerificationService, type: :service do
     context "when an unexpected error occurs" do
 
       before do
-        allow(HTTParty).to receive(:post)
         allow(service).to receive(:make_api_request).and_raise(StandardError, error_message)
       end
 
       it "does NOT call the external API" do
-        expect(HTTParty).not_to have_received(:post).
+        expect(HTTParty).not_to receive(:post).
             with(AddressVerificationService::BASE_URL, { headers: AddressVerificationService::HEADERS, body: { "address": address }.to_json })
       end
 
