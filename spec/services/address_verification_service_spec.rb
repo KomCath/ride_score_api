@@ -108,7 +108,7 @@ RSpec.describe AddressVerificationService, type: :service do
           with(AddressVerificationService::BASE_URL, { headers: AddressVerificationService::HEADERS, body: { "address": address }.to_json })
       end
 
-      it "returns a ERROR status" do
+      it "returns an ERROR status" do
         expect(result).to include(message: a_string_including(http_code.to_s, error_message))
       end
     end
