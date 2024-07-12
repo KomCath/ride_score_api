@@ -12,24 +12,24 @@ RSpec.describe Ride, type: :model do
   describe "Callbacks" do
     describe ".set_attributes before_save" do
       shared_examples "triggers set_attributes before_save" do
-        it "triggers" do
-          ride = create(:ride, ride_duration: ride_duration, ride_earnings: ride_earnings)
-          allow(ride).to receive(:set_attributes)
-          ride.save
-          expect(ride).to have_received(:set_attributes)
-        end
+        let(:ride) { build(:ride, ride_duration: ride_duration, ride_earnings: ride_earnings) }
+          before do
+            allow(ride).to receive(:set_attributes)
+            ride.save
+          end
+          it { expect(ride).to have_received(:set_attributes) }
       end
 
       context "when ride_duration is nil" do
         let(:ride_duration) { nil }
         let(:ride_earnings) { 15.3 }
-        include_examples "triggers set_attributes before_save"
+        it_behaves_like "triggers set_attributes before_save"
       end
 
       context "when ride_earnings is nil" do
         let(:ride_duration) { 15.3 }
         let(:ride_earnings) { nil }
-        include_examples "triggers set_attributes before_save"
+        it_behaves_like "triggers set_attributes before_save"
       end
 
       context "when necessary attributes are NOT nil" do
@@ -37,7 +37,7 @@ RSpec.describe Ride, type: :model do
         let(:ride_earnings) { 15.3 }
 
         it "does not trigger set_attributes" do
-          ride = create(:ride, ride_duration: ride_duration, ride_earnings: ride_earnings)
+          ride = build(:ride, ride_duration: ride_duration, ride_earnings: ride_earnings)
           allow(ride).to receive(:set_attributes)
           ride.save
           expect(ride).not_to have_received(:set_attributes)
