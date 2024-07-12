@@ -7,21 +7,15 @@ class GoogleMapsMetricsService
   end
 
   def fetch_distance_and_duration
-    response = check_cache
-    handle_response(response)
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      make_api_request
+      handle_api_response
+    end
   rescue StandardError => e
-    { error: "An unexpected error occurred: #{e.message}" }
+    { status: "ERROR", origin: @origin, destination: @destination, message: e.message }
   end
 
   private
-
-  def check_cache
-    cache_key = "distance_#{@origin}_#{@destination}"
-
-    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
-      make_api_request
-    end
-  end
 
   def make_api_request
     url = "#{BASE_URL}?"
@@ -30,25 +24,35 @@ class GoogleMapsMetricsService
     url << "&destinations=#{@destination}"
     url << "&key=#{ENV["GOOGLE_MAPS_API_KEY"]}"
 
-    HTTParty.get(url)
+    @response = HTTParty.get(url)
   end
 
-  def handle_response(response)
-    if response["status"] == "OK"
-      if response["rows"][0]["elements"][0]["status"] == "OK"
-        parse_response(response)
+  def handle_api_response
+    if @response.success?
+      parse_api_response
+      if @request_status == "OK" && @element_status == "OK"
+        { status: "SUCCESS", distance: @distance, duration: @duration }
       else
-      { error: response["rows"][0]["elements"][0]["status"] }
+        error_message = @element_status.nil? ? "#{@request_status}: #{@request_status_error}" : @element_status
+        raise error_message
       end
     else
-      { error: response["error_message"] }
+      error_message = @response.parsed_response&.dig("error", "message") || "Unknown error"
+      raise "Code: #{@response.code} - #{error_message}"
     end
   end
 
-  def parse_response(response)
-    { 
-      distance: response["rows"][0]["elements"][0]["distance"]["text"],
-      duration: response["rows"][0]["elements"][0]["duration"]["text"]
-    }
+  def parse_api_response
+    data = JSON.parse(@response.body)
+
+    @request_status = data["status"]
+    @request_status_error = data["error_message"]
+    @element_status = data.dig("rows", 0, "elements", 0, "status")
+    @distance = data.dig("rows", 0, "elements", 0, "distance", "text")
+    @duration = data.dig("rows", 0, "elements", 0, "duration", "text")
+  end
+
+  def cache_key
+    "distance_metrics:#{@origin}_to_#{@destination}"
   end
 end
