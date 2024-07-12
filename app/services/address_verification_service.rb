@@ -21,7 +21,7 @@ class AddressVerificationService
 
   def handle_api_response
     if @response.success?
-      parse_response
+      parse_api_response
       if @has_fixable_components
         { status: "FIX", message: @fixable_components }
       elsif @has_confirmable_components
@@ -30,12 +30,12 @@ class AddressVerificationService
         { status: "VERIFIED", verified_address: @verified_address, coordinates: @coordinates}
       end
     else
-      error_message = @response.parsed_response["error"]["message"] || "Unknown error"
+      error_message = @response.parsed_response&.dig("error", "message") || "Unknown error"
       raise "Code: #{@response.code} - #{error_message}"
     end
   end
 
-  def parse_response
+  def parse_api_response
     data = JSON.parse(@response.body)
 
     @coordinates = data.dig("result", "geocode", "location")

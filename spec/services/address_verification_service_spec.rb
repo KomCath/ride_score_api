@@ -74,7 +74,6 @@ RSpec.describe AddressVerificationService, type: :service do
         it "returns a CONFIRM status" do
           expect(result).to include(status: "CONFIRM")
         end
-
       end
 
       context "when has_confirmable_components" do
