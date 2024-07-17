@@ -4,21 +4,22 @@ RSpec.describe AddressVerificationBuilder, type: :builder do
       expect { described_class.new }.to raise_error(ArgumentError)
     end
 
-    it "requires an Address object" do
-      expect { described_class.new(Ride.new) }.to raise_error(ArgumentError, "Expected an Address object")
-    end
-
     it "address can NOT be nil" do
       expect { described_class.new(nil) }.to raise_error(ArgumentError, "Address cannot be nil")
+    end
+
+    it "requires an Address object" do
+      expect { described_class.new("NOT an Address") }.to raise_error(ArgumentError, "Expected an Address object")
     end
   end
 
   describe ".build" do
-    let(:builder) { described_class.new(address) }
-    let(:result) { builder.build }
+    let(:result) { described_class.build(address) }
     let (:address) { create(:address, line1:, line2:) }
     let(:line1) { Faker::Address.street_address }
     let(:line2) { Faker::Address.secondary_address }
+
+    before { result }
 
     it "returns a hash with the correct keys" do
       expect(result).to include("regionCode", "addressLines", "locality", "administrativeArea", "postalCode")
@@ -51,7 +52,5 @@ RSpec.describe AddressVerificationBuilder, type: :builder do
         expect(result["addressLines"]).to eq([line1])
       end
     end
-
-
   end
 end
