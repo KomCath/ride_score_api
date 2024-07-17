@@ -1,5 +1,5 @@
 RSpec.describe AddressVerificationService, type: :service do
-  describe ".initialize" do
+  describe "#initialize" do
     it "requires address" do
       expect { described_class.new }.to raise_error(ArgumentError)
     end
