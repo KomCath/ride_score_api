@@ -1,7 +1,7 @@
 RSpec.describe GoogleMapsMetricsService, type: :service do
   let(:coordinates) { [Faker::Address.latitude, Faker::Address.longitude] }
 
-  describe ".initialize" do
+  describe "#initialize" do
     it "requires origin" do
       expect { described_class.new(coordinates) }.to raise_error(ArgumentError)
     end
