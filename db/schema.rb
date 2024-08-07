@@ -52,21 +52,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_24_234037) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "verified_addresses", force: :cascade do |t|
-    t.string "line1", null: false
-    t.string "line2"
-    t.string "city", null: false
-    t.string "state", null: false
-    t.string "zip_code", null: false
-    t.string "country"
-    t.string "coordinates", null: false
-    t.bigint "address_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["address_id"], name: "index_verified_addresses_on_address_id"
-  end
-
   add_foreign_key "assignments", "drivers"
   add_foreign_key "assignments", "rides"
-  add_foreign_key "verified_addresses", "addresses"
 end
