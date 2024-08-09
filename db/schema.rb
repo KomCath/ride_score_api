@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_05_220134) do
     t.datetime "updated_at", null: false
     t.string "verification_status"
     t.json "coordinates"
+    t.string "verification_status_message"
   end
 
   create_table "assignments", force: :cascade do |t|
