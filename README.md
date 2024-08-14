@@ -56,25 +56,29 @@ Recently, I was given a take-home Rails project as part of an interview process.
 NOTE: make sure that for this test `ruby -v` is `3.1.2` and `rails -v` is `7.0.8.1`
 
 1. clone this repo and cd into it
+
 2. run `echo GOOGLE_MAPS_API_KEY= > .env` and add your valid API key as the value, if you don't have one go [here](https://developers.google.com/maps/documentation/embed/get-api-key), it's free!
 ```ruby
 GOOGLE_MAPS_API_KEY=valid_key_here
 ```
+
 3. enable the service `distance-matrix-backend` from Google Maps API that we are using for this challenge [here](https://console.cloud.google.com/marketplace/product/google/distance-matrix-backend.googleapis.com?q=search&referrer=search&project=peak-lattice-417821)
+
 4. run `bundle install`
 
 5. run `rails dev:cache`
 ```ruby
 => Development mode is now being cached.
 ```
+
 6. run `rails db:setup`
 ```
 🌱Seeding...
 ```
-7. run `rails server`
-8. watch the magic happen ✨
 
-this endpoint returns a paginated JSON list of rides in descending `score` order for a given `driver`, and the path is `/v1/driver_id/assignments`
+7. run `rails server`
+
+8. watch the magic happen ✨ *this endpoint returns a paginated JSON list of rides in descending `score` order for a given `driver`, and the path is `/v1/driver_id/assignments`*
 
 - first, let's call the endpoint with a `driver_id` that has [less than 10 rides assigned](http://localhost:3000/v1/3/assignments)
 
