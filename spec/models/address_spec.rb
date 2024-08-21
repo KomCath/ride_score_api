@@ -1,13 +1,45 @@
 RSpec.describe Address, type: :model do
-  describe "Associations" do
-    it { is_expected.to have_one(:verified_address).dependent(:destroy) }
-  end
-
   describe "Validations" do
     it { is_expected.to validate_presence_of(:line1) }
     it { is_expected.to validate_presence_of(:city) }
     it { is_expected.to validate_presence_of(:state) }
     it { is_expected.to validate_presence_of(:zip_code) }
+
+    it { is_expected.to validate_length_of(:line1).is_at_least(2) }
+    it { is_expected.to validate_length_of(:city).is_at_least(2) }
+
+    it { is_expected.to validate_inclusion_of(:state).in_array(Address::VALID_STATES).with_message("must be a valid 2-digit US state") }
+  end
+
+  describe "Callbacks" do
+    describe ".normalize_attributes before_validation" do
+      let(:address) { build(:address, line1: "  AbCdE  ", city: "  Long  Beach  ", state: "ca") }
+
+      before { address.save }
+
+      it { expect(address).to be_valid }
+
+      it "normalizes line1" do
+        expect(address.line1).to eq "ABCDE"
+      end
+
+      it "normalizes city" do
+        expect(address.city).to eq "LONG BEACH"
+      end
+
+      it "normalizes state" do
+        expect(address.state).to eq "CA"
+      end
+
+      it "does not change line2 if not present" do
+        expect(address.line2).to be_nil
+      end
+
+      it "does not normalize attributes if they are not changed" do
+        address.update!(zip_code: "10002")
+        expect(address).to_not receive(:normalize_attributes)
+      end
+    end
   end
 
   describe "State Machine" do
