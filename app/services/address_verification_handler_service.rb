@@ -1,10 +1,10 @@
 class AddressVerificationHandlerService
   def initialize(address_params)
-    @address_params = address_params
+    @address_params = address_params.transform_values { |v| v.upcase.squish }
   end
 
   def call
-    address = Address.find_by(@address_params)
+    address = Address.where(@address_params).take
 
     if address
       handle_existing_address(address)
@@ -17,9 +17,13 @@ class AddressVerificationHandlerService
 
   def handle_existing_address(address)
     if address.is_verified?
-      address_lines_builder(address)
+      address.verified_address
     else
-      { status: address.verification_status, message: address.verification_status_message, address_id: address.id}
+      {
+        status: address.verification_status,
+        message: address.verification_status_message,
+        address_id: address.id
+      }
     end
   end
 
@@ -27,10 +31,8 @@ class AddressVerificationHandlerService
     @new_address = Address.new(@address_params)
 
     if @new_address.save
-      # binding.pry
-
       address_verification_result = AddressVerificationService.new(address_verification_builder).verify_address
-      process_address_verification_result(@new_address, address_verification_result)
+      process_address_verification_result(address_verification_result)
     else
       { status: :error, message: @new_address.errors.full_messages.to_sentence }
     end
@@ -52,17 +54,28 @@ class AddressVerificationHandlerService
     address_lines.join(" ")
   end
 
-  def process_address_verification_result(address, address_verification_result)
+  def process_address_verification_result(address_verification_result)
     case address_verification_result[:status]
     when "ERROR"
-      address.mark_unable_to_perform_verification!
-      address_verification_result
+      @new_address.update!(verification_status_message: address_verification_result[:message])
+      @new_address.mark_unable_to_perform_verification!
+      {
+        status: @new_address.verification_status,
+        message: @new_address.verification_status_message,
+        address_id: @new_address.id
+      }
     when "FIX", "CONFIRM"
-      address.mark_verification_pending!
-      address_verification_result.merge(address_id: address.id, address: address_lines_builder(address))
+      @new_address.update!(verification_status_message: address_verification_result[:message])
+      @new_address.mark_verification_pending!
+      { 
+        status: @new_address.verification_status,
+        message: @new_address.verification_status_message,
+        address_id: @new_address.id
+      }
     when "VERIFIED"
-      address.update!(address_verification_result[:verified_address_params])
-      address.mark_verification_successful!
+      @new_address.update!(address_verification_result[:verified_address_params])
+      @new_address.mark_verification_successful!
+      @new_address.verified_address
     end
   end
 end
