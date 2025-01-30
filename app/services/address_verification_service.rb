@@ -27,7 +27,7 @@ class AddressVerificationService
       elsif @has_confirmable_components
         { status: "CONFIRM", message: @confirmable_components }
       else
-        { status: "VERIFIED", verified_address: @verified_address, coordinates: @coordinates}
+        { status: "VERIFIED", verified_address_params: @verified_address_params }
       end
     else
       error_message = @response.parsed_response&.dig("error", "message") || "Unknown error"
@@ -38,13 +38,23 @@ class AddressVerificationService
   def parse_api_response
     data = JSON.parse(@response.body)
 
-    @coordinates = data.dig("result", "geocode", "location")
-    @verified_address = data.dig("result", "address", "formattedAddress")
+    @verified_address_params = {
+      coordinates: data.dig("result", "geocode", "location"),
+      verified_address: data.dig("result","address","formattedAddress")
+    }
+
+    @address_components = data.dig("result", "address", "addressComponents") || []
+
     @has_fixable_components = data.dig("result", "verdict", "hasUnconfirmedComponents")
+
+    unconfirmed_components = data.dig("result", "address", "unconfirmedComponentTypes") || []
+    @fixable_components = unconfirmed_components.map do |unconfirmed_component|
+      component = @address_components.find { |c| c["componentType"] == unconfirmed_component }
+      { unconfirmed_component => component.dig("componentName", "text") }
+    end.compact
+
     @has_confirmable_components = data.dig("result", "verdict", "hasReplacedComponents")
-    @fixable_components = data.dig("result", "address", "unconfirmedComponentTypes")
-    address_components = data.dig("result", "address", "addressComponents") || []
-    @confirmable_components = address_components.map do |component|
+    @confirmable_components = @address_components.map do |component|
       if component.keys.any? { |key| ["spellCorrected", "replaced"].include?(key) }
         { component["componentType"] => component.dig("componentName", "text") }
       end

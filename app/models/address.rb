@@ -14,6 +14,7 @@
 #  verification_status         :string
 #  coordinates                 :json
 #  verification_status_message :string
+#  verified_address            :string
 #
 class Address < ApplicationRecord
   include AASM
