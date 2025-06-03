@@ -13,7 +13,7 @@ RSpec.describe Address, type: :model do
 
   describe "Callbacks" do
     describe ".normalize_attributes before_validation" do
-      let(:address) { build(:address, line1: "  AbCdE  ", city: "  Long  Beach  ", state: "ca") }
+      let(:address) { build(:address, line1: "  AbCdE  ", line2: nil, city: "  Long  Beach  ", state: "ca") }
 
       before { address.save }
 
