@@ -65,4 +65,4 @@ addresses.each do |address|
   end
 end
 
-puts "\nFinished Rides 🌳\n\n"
+puts "\nFinished Rides ..."

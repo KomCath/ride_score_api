@@ -13,4 +13,4 @@ ActiveRecord::Base.transaction do
   end
 end
 
-puts "\nFinished Assingments 🌳\n\n"
+puts "\nFinished Assingments ..."
