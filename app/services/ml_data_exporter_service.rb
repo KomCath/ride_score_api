@@ -12,7 +12,7 @@ class MlDataExporterService
 
       raise "No assignments found to export." if assignments.empty?
 
-      write_csv(tempfile, assignments)
+      write_csv(tempfile)
       FileUtils.mv(tempfile.path, EXPORT_PATH)
 
       Rails.logger.info("MlDataExporterService.export Success")
@@ -30,7 +30,7 @@ class MlDataExporterService
     @assignments ||= Assignment.includes(:ride)
   end
 
-  def write_csv(file, assignments)
+  def write_csv(file)
     CSV.open(file.path, "w") do |csv|
       csv << CSV_HEADERS
 
