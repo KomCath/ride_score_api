@@ -33,3 +33,10 @@
 
 # Ignore Mac and Linux file system files
 .DS_Store
+
+# Ignore Python build and cache files
+*.pyc
+*.pyo
+__pycache__/
+.pytest_cache/
+ml_models/*.pkl
