@@ -38,7 +38,7 @@ def train():
 
         # Train model
         model = LinearRegression()
-        model.fit(X_train, y_train)
+        model.fit(X_train.values, y_train.values)
 
         # Evaluate model
         r2_score = model.score(X_test, y_test)
