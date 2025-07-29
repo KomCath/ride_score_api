@@ -11,6 +11,7 @@
 
 `ride_score_api` began as a take-home interview challenge. Although I didn't get the job, I kept building. Turning the codebase into a learning playground to explore service design, APIs, and now AI/ML integration.
 
+
 ---
 
 ## Setup
@@ -19,33 +20,21 @@ NOTE: make sure to have installed: `ruby -v` is `3.1.2` and `rails -v` is `7.0.8
 
 1. clone this repo and cd into it
 
-2. run `echo GOOGLE_MAPS_API_KEY= > .env` and add your valid API key as the value, if you don't have one go [here](https://developers.google.com/maps/documentation/embed/get-api-key), it's free!
+2. run `echo GOOGLE_MAPS_API_KEY= > .env` and add your valid API key as the value, if you don't have one, you can get it [here](https://developers.google.com/maps/documentation/embed/get-api-key), it's free!
 ```ruby
 GOOGLE_MAPS_API_KEY=valid_key_here
 ```
 
-3. enable the service `distance-matrix-backend` from Google Maps API that we are using for this challenge [here](https://console.cloud.google.com/marketplace/product/google/distance-matrix-backend.googleapis.com?q=search&referrer=search&project=peak-lattice-417821)
+3. run `bundle install`
 
-4. run `bundle install`
+4. run `rails dev:cache`
 
-5. run `rails dev:cache`
-```ruby
-=> Development mode is now being cached.
-```
-
-6. run `rails db:setup`
-```
-🌱Seeding...
-```
-
-7. run `rails server`
 
 ---
 
 ## Part 1 - The Original Challenge
 
 Build a basic Rails API that could score and rank driver-ride assignments using data from the Google Maps API.
-
 
 #### Technical spec
 
@@ -58,7 +47,6 @@ Build a basic Rails API that could score and rank driver-ride assignments using 
 - Include RSpec tests
 - Document the API in Markdown
 
-
 #### What I built
 
 **Models:** `Driver` + `Ride` + `Assignment` *(used to link drivers + rides with calculated score)*
@@ -67,35 +55,38 @@ Build a basic Rails API that could score and rank driver-ride assignments using 
 
 **Service:** `GoogleMapsMetricsService` - fetches commute and ride metrics using Google Maps Distance Matrix API
 
-
 #### WIP Observations
 
 - No CRUD yet – all models are seeded for demo purposes
 - Google Maps API calls happen at seed time (`rails db:seed`) instead of live — not ideal, but functional for proof-of-concept
 - Used service objects to isolate external API logic early on
 
-
 #### Testing
 
 Watch the magic happen ✨ this endpoint returns a paginated JSON list of rides in descending `score` order for a given `driver`, and the path is *`/v1/driver_id/assignments`*
 
-1. first, let's call the endpoint with a `driver_id` that has [less than 10 rides assigned](http://localhost:3000/v1/3/assignments) *`/v1/3/assignments`*
+1. make sure to follow the [setup](#setup) steps first
 
-2. with a `driver_id` that has [more than 10 rides assigned](http://localhost:3000/v1/1/assignments) *`/v1/1/assignments`*
+2. enable the service `Distance Matrix API` from your Google Cloud console [here](https://console.cloud.google.com/marketplace/product/google/distance-matrix-backend.googleapis.com)
 
-3. with a `driver_id` that has [no rides assigned](http://localhost:3000/v1/2/assignments) *`/v1/2/assignments`*
+3. run `rails db:setup` followed by `rails server`
 
-4. and finally with a `driver_id` that is [not in the db](http://localhost:3000/v1/5/assignments) *`/v1/5/assignments`*
+4. first, let's call the endpoint with a `driver_id` that has [less than 10 rides assigned](http://localhost:3000/v1/3/assignments) *`/v1/3/assignments`*
+
+5. with a `driver_id` that has [more than 10 rides assigned](http://localhost:3000/v1/1/assignments) *`/v1/1/assignments`*
+
+6. with a `driver_id` that has [no rides assigned](http://localhost:3000/v1/2/assignments) *`/v1/2/assignments`*
+
+7. and finally with a `driver_id` that is [not in the db](http://localhost:3000/v1/5/assignments) *`/v1/5/assignments`*
 
 
 ---
 
-## Part 2 - Post Challenge -  Address Layer
+## Part 2 - Post Challenge - Address Layer
 
 After the challenge, one of the first things I knew I wanted to add was a proper `Address` model. It honestly didn't make sense for this type of project not to have it, but because of the time constraints of the take-home, it wasn't part of the original build.
 
 Having worked with address logic in a previous job, I felt confident tackling this layer. Plus, I was still enjoying working with the Google Maps API and wanted to keep exploring its edge cases and limitations. So I went for it and also added address verification.
-
 
 #### What I built
 
@@ -114,10 +105,67 @@ Having worked with address logic in a previous job, I felt confident tackling th
 - Still exploring the best UX flow for when address verification fails (e.g., invalid addresses that require manual correction)
 - Implemented address verification as a backgrounded concern to reduce duplicate calls and standardize data
 
-
 #### Testing
 
-*...to be continued*
+As I mentioned above, this is still  a WIP, but if you're curious about how address verification is working so far, you can currently test it manually through the `AddressVerificationHandlerService`
+
+1. make sure to follow the [setup](#setup) steps first
+
+2. enable the service `Address Validation API` from your Google Cloud console [here](https://console.cloud.google.com/marketplace/product/google/addressvalidation.googleapis.com)
+
+3. go to `rails c`
+
+4. first, let's test a `verification_successful` — valid address
+```bash
+address_params = {
+  line1: "204 Nieto St",
+  city: "Long Beach",
+  state: "CA",
+  zip_code: "90803"
+}
+
+AddressVerificationHandlerService.new(address_params).call
+# you should see
+=> "204 Nieto Avenue, Long Beach, CA 90803-5508, USA"
+```
+
+5. then `verification_pending` — slightly incorrect city
+```bash
+address_params = {
+  line1: "2106 Bermuda St",
+  city: "Laguna Beach",
+  state: "CA",
+  zip_code: "90814"
+}
+
+AddressVerificationHandlerService.new(address_params).call
+# you should see
+=> {
+  status: "verification_pending",
+  message: "[{\"locality\"=>\"Long Beach\"}]",
+  address_id: 2
+}
+```
+
+6. then `unable_to_perform_verification` — with no API key for this test. Exit your `rails c` and go to your `.env` to comment out the line with the `GOOGLE_MAPS_API_KEY`
+
+7. go back into `rails c`
+```bash
+address_params = {
+  line1: "204 Nieto St",
+  city: "Laguna Beach",
+  state: "CA",
+  zip_code: "90803"
+}
+
+AddressVerificationHandlerService.new(address_params).call
+# you should see
+=> {
+  status: "unable_to_perform_verification",
+  message: "Code: 403 - Method doesn't allow unregistered callers...",
+  address_id: 5
+}
+```
 
 
 ---
@@ -137,7 +185,6 @@ Instead of using Rails for training the model, I'm using Python, since most ML t
 - `MlDataExporterService` - fetches ride and assignment data and outputs a CSV for training the ML model
 - `train_assignment_model.py` - uses `scikit-learn` to train a simple regression model that predicts `score`, and saves the model as a `pkl` file
 - `ScorePredictionService` *(currently in progress)* - loads the `pkl` and return a predicted `score`
-
 
 #### WIP Observations
 
@@ -173,6 +220,7 @@ Frontend
 
 - Add a lightweight frontend to manage CRUD in React
 - Replace CSV inputs/outputs with UI forms
+
 
 ---
 
