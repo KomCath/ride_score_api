@@ -12,6 +12,7 @@ gem "bootsnap", require: false
 gem "geocoder"
 gem "httparty"
 gem "kaminari"
+gem "pycall"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
